@@ -1,0 +1,9 @@
+#Ignore all
+*
+
+#unignore all with extension
+!*.cxx
+!*.h
+!*.h.in
+!*.txt
+!*.md
