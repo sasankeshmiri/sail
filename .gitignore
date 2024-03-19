@@ -1,9 +1,13 @@
 #Ignore all
 *
 
+#unignore all directories
+!*/
+
 #unignore all with extension
 !*.cxx
 !*.h
 !*.h.in
 !*.txt
 !*.md
+!*.cmake
