@@ -11,9 +11,13 @@ project(Sail-prototype VERSION 1.0)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-set(CMAKE_CXX_STANDARD_LIBRARIES "-static-libgcc -static-libstdc++ -lwsock32 -lws2_32 ${CMAKE_CXX_STANDARD_LIBRARIES}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -Weffc++ -fmax-errors=5")
+set(CMAKE_CXX_STANDARD_LIBRARIES "${CMAKE_CXX_STANDARD_LIBRARIES} -lglfw -lGL -ldl")
 
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-Bstatic,--whole-archive -lwinpthread -Wl,--no-whole-archive")
+if (WIN32)
+	set(CMAKE_CXX_STANDARD_LIBRARIES "-static-libgcc -static-libstdc++ -lwsock32 -lws2_32 ${CMAKE_CXX_STANDARD_LIBRARIES}")
+	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-Bstatic,--whole-archive -lwinpthread -Wl,--no-whole-archive")
+endif()
 
 # TODO 8: Use configure_file to configure and copy TutorialConfig.h.in to
 #         TutorialConfig.h
@@ -21,7 +25,7 @@ configure_file(SailConfig.h.in SailConfig.h)
 
 # TODO 3: Add an executable called Tutorial to the project
 # Hint: Be sure to specify the source file as tutorial.cxx
-add_executable(sail-prototype ../Source/Sail.cxx)
+add_executable(sail-prototype ../Source/Sail.cpp ../Source/glad.c)
 
 # TODO 9: Use target_include_directories to include ${PROJECT_BINARY_DIR}
 target_include_directories(sail-prototype PUBLIC ${PROJECT_BINARY_DIR})
