@@ -5,7 +5,7 @@
 !*/
 
 #unignore all with extension
-!*.cxx
+!*.cpp
 !*.h
 !*.h.in
 !*.txt
