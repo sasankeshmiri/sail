@@ -9,6 +9,8 @@ namespace GLOBALS
 
 	const int SCREEN_WIDTH{1415};
 	const int SCREEN_HEIGHT{810};
+
+	const std::string PLAYERTEXTURE{"../../src/textures/boat.svg"};
 }
 
 #endif

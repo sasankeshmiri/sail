@@ -9,12 +9,16 @@
 
 #include <string>
 #include <iostream>
+#include <numbers>
+#include <cmath>
 
 int main()
 {
 	Graphics graphics{};
-	int playerXPos{GLOBALS::SCREEN_WIDTH/2};
-	int playerYPos{GLOBALS::SCREEN_HEIGHT/2};
+	double playerXPos{GLOBALS::SCREEN_WIDTH/2};
+	double playerYPos{GLOBALS::SCREEN_HEIGHT/2};
+	bool playerThrottle{false};
+	double playerRotation{90.0}; //Degrees
 
 	//Start up SDL and create window
 	if (!graphics.init())
@@ -27,6 +31,26 @@ int main()
 		bool running{true};
 		//Event handler
 		SDL_Event e{};
+
+		SDL_RWops* textureSource{SDL_RWFromFile(GLOBALS::PLAYERTEXTURE.c_str(), "r")};
+		if (textureSource == NULL)
+		{
+			std::cout << "Failed to read image! SDL Error: " << SDL_GetError() << std::endl;
+			running = false;
+		}
+		SDL_Surface* textureSurface{IMG_LoadSizedSVG_RW(textureSource, 30, 100)};
+		if (textureSurface == NULL)
+		{
+			std::cout << "Failed to create surface from image! SDL Error: " << SDL_GetError() << std::endl;
+			running = false;
+		}
+		SDL_Texture* playerTexture{SDL_CreateTextureFromSurface(graphics.renderer, textureSurface)};
+		if (playerTexture == NULL)
+		{
+			std::cout << "Failed to create texture from surface! SDL Error: " << SDL_GetError() << std::endl;
+			running = false;
+		}
+		SDL_Rect renderTarget{int(playerXPos), int(playerYPos), 30, 100};
 
 		//While application is running
 		while (running)
@@ -48,10 +72,21 @@ int main()
 					}
 					if (e.key.keysym.sym == SDLK_w)
 					{
-						std::cout << "Pressed W!" << std::endl;
-						playerYPos -= 5;
+						playerThrottle = true;
+					}
+					if (e.key.keysym.sym == SDLK_s)
+					{
+						playerThrottle = false;
 					}
 				}
+			}
+
+			//Game activity
+			//Move player if throttle is set
+			if (playerThrottle)
+			{
+					playerYPos -= sin(playerRotation*std::numbers::pi/180.0)*0.5;
+					playerXPos += cos(playerRotation*std::numbers::pi/180.0)*0.5;
 			}
 
 			//Clear screen
@@ -59,17 +94,9 @@ int main()
 			SDL_RenderClear(graphics.renderer);
 
 			//Draw player character
-			int playerSizeOffset{10};
-			SDL_Color playerColor{255, 0, 0, 255};
-			SDL_Vertex vertexTopCenter{{float(playerXPos), float(playerYPos-playerSizeOffset)}, playerColor, {1, 1}};
-			SDL_Vertex vertexBottomLeft{{float(playerXPos-playerSizeOffset), float(playerYPos+playerSizeOffset)}, playerColor, {1, 1}};
-			SDL_Vertex vertexBottomRight{{float(playerXPos+playerSizeOffset), float(playerYPos+playerSizeOffset)}, playerColor, {1, 1}};
-
-			SDL_Vertex vertices[]{vertexTopCenter, vertexBottomLeft, vertexBottomRight};
-
-			SDL_SetRenderDrawColor(graphics.renderer, 255, 255, 255, 255);
-
-			SDL_RenderGeometry(graphics.renderer, NULL, vertices, 3, NULL, 0);
+			renderTarget.x = int(playerXPos);
+			renderTarget.y = int(playerYPos);
+			SDL_RenderCopy(graphics.renderer, playerTexture, NULL, &renderTarget);
 
 			//Update screen
 			SDL_RenderPresent(graphics.renderer);

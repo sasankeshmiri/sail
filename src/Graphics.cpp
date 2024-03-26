@@ -41,19 +41,16 @@ bool Graphics::init()
 			{
 				//Initialize renderer color
 				SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-
-				//Initialize PNG loading
-				int imgFlags{IMG_INIT_PNG};
-				if (!(IMG_Init(imgFlags) & imgFlags))
-				{
-					std::cout << "SDL_image could not initialize! SDL_image Error: " << IMG_GetError() << std::endl;
-					success = false;
-				}
 			}
 		}
 	}
 
 	return success;
+}
+
+SDL_Texture* Graphics::loadTexture(SDL_Surface* textureSurface)
+{
+	return SDL_CreateTextureFromSurface(renderer, textureSurface);
 }
 
 //Frees media and shuts down SDL

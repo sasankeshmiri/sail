@@ -12,10 +12,13 @@ class Graphics
 {
 	private:
 		SDL_Window* window{NULL};
+		SDL_Surface* surface{NULL};
+		SDL_Texture* texture{NULL};
 
 	public:
 		SDL_Renderer* renderer{NULL};
 		bool init();
+		SDL_Texture* loadTexture(SDL_Surface*);
 		void close();
 };
 
