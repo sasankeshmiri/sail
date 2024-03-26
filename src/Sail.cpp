@@ -46,6 +46,11 @@ int main()
 					{
 						running = false;
 					}
+					if (e.key.keysym.sym == SDLK_w)
+					{
+						std::cout << "Pressed W!" << std::endl;
+						playerYPos -= 5;
+					}
 				}
 			}
 
